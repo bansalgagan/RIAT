@@ -1,0 +1,108 @@
+// Place all the styles related to the praxeng controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+/* CUSTOMIZE THE NAVBAR
+-------------------------------------------------- */
+// #558C89 dark #74AFAD light #D9853B #ECECEA
+
+$dark-gray: #585858;
+$green: #118C4E;
+$light-green: #C1E1A6;
+$org : #FF9009;
+$light-gray: #D8D8D8;
+
+$primary: #558C89;
+$primary-light: #74AFAD;
+$secondary: #D9853B;
+$ternary: #ECECEA;
+
+body { 
+	padding-top: 90px;
+	font-size: 16px;
+ }
+
+
+//-----------------------NAVBAR------------------------
+.navbar-brand{
+	color: $primary !important;
+	font-size: 70px;
+	font-weight: 400;
+	font-family: 'Euphoria Script', cursive;
+}
+
+.navbar-brand,
+.navbar-nav li a {
+    line-height: 80px;
+    height: 80px;
+    padding-top: 0;
+}
+
+.navbar{
+	background-color: rgba(255,255,255,0.9) !important;
+}
+
+.navbar,.navbar > .container{
+	border: none;
+	margin: auto;
+}
+
+.navbar > .container {
+	border-bottom: solid 1px $light-gray;
+}
+
+//---------------------LANDPAGE----------------------------
+.about-wrapper > .jumbotron {
+	background-color: white;
+	text-align: center;
+}
+
+//--------------------QUESTION------------------------------
+strong{color: $primary ;}
+
+.arg1{ color: $green;}
+
+.arg2{ color: $secondary;}
+
+.example-wrapper > h3{
+	text-align: center;
+}
+.panel{
+	border: none;
+}
+.well{
+	margin-top: 0;
+	padding: 5px;
+}
+#blank{
+	color: rgba(0,0,0,0);
+}
+.blank_sentence{
+		text-align: center;
+}
+
+.btn-toolbar-vertical{
+	margin-top: 5px;
+}
+//-------------------FEEDBACK-------------------
+.feedback-wrapper > .jumbotron{
+	background-color: white;
+}
+.feedback-wrapper > .jumbotron > h3{
+	text-align: center;
+}
+//-------------------CONSENT------------------
+
+.consent-wrapper > .panel> .panel-body > h4, .consent-wrapper > .panel > .panel-body > p{
+	font-size: 80%;
+}
+
+
+//-------------------FOOTER-------------------
+.footer{
+	position: relative;
+	bottom: 0;
+}
+.footer > p{
+	text-align: center;
+}

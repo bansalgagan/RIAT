@@ -1,0 +1,10 @@
+<div class="jumbotron">
+	<h3><strong>Your Progress</strong></h3>
+		<p>Correct: <%= @num_correct %></p>
+		<p>All: <%= @num_question %></p>
+		<% if !@distribution.nil?%>
+			<% @distribution.each do |key, value|%>
+				<p><%= key["relation_display_name"] or key %> : <%= value%> </p>
+			<%end%>
+			<%end%>	
+</div>

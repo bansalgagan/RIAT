@@ -27,13 +27,14 @@ textual passages, and estimate the difficulty people have when trying to read an
 			<p><em>By clicking on contnue you confirm that you are above the age of 18 and that you have read and understood 
 this information and agree to take part in this research. Your participation is voluntary and you are free to 
 leave the experiment at any time by simply closing the web browser.</em></p>
-	<form action='/save_response' role="form" method="post">
+	<form action='/practice' role="form" method="get">
 	  <div class="form-group">		
 			<div class="btn-toolbar-vertical">
 				<!-- <button type="button" class="btn btn-danger btn-lg">Skip</button> -->
 				<button type="submit" class="btn btn-primary" name="option" value="submit">Continue</button>		
 			</div>
 			<input type="hidden" name="question_id" value= "<%= @question_id %>">
+			<input type="hidden" name="annotation_id" value= "<%= @annotation_id %>">
 		</div>
 	</form>
 </div>

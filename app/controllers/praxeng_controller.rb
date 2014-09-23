@@ -8,6 +8,7 @@ class PraxengController < ApplicationController
     @sentence = get_question_sentence(@question)
     @next_page = "/save_response"
     if is_new_user?
+      @num_question = 0
       @next_page = "/save_response_consent"
     else
       @question = get_question_for_user
@@ -19,6 +20,7 @@ class PraxengController < ApplicationController
   
   def consent
     @question_id = params[:question_id]
+    @annotation_id = params[:annotation_id]
   end
   
   def practice  

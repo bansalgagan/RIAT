@@ -292,8 +292,8 @@ module PraxengHelper
     
     if !annotation.nil?
       gold = compute_gold_full_by_majority_and_exclude(question, annotation)
-      puts "GOLD-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      puts gold
+      # puts "GOLD-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      # puts gold
       # If I don't know the answer
       if gold == []
         return 1, new_answer_message
@@ -311,8 +311,8 @@ module PraxengHelper
           
       user_unattempted = []
       user_incorrect = []
-      puts "USER-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      puts  response
+      # puts "USER-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      # puts  response
       score = 0.0
       if gold.include?("None of these") && response.include?("None of these")
         score = 1.0
@@ -332,10 +332,10 @@ module PraxengHelper
           user_incorrect.push(ans["relation_display_name"])
         end
       end
-      puts "INC-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      puts  user_incorrect
-      puts "UNAT-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      puts  user_unattempted
+      # puts "INC-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      # puts  user_incorrect
+      # puts "UNAT-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
+      # puts  user_unattempted
       
       
       message = "Thanks, but we think "
@@ -354,7 +354,7 @@ module PraxengHelper
         return score, message
       end
       
-      message = "Oops, but we think "
+      message = "Oops, we think "
       if  user_incorrect.size != 0
         if user_incorrect.size == 1
           message += user_incorrect[0].to_s+ " is wrong"

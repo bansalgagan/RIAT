@@ -15,7 +15,7 @@ production:
   protocol: 'http'
   host: localhost
   port: 5984
-  prefix: praxeng2
+  prefix: riat
   suffix: development
   username: test
   password: test

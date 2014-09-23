@@ -57,10 +57,14 @@ body {
 	text-align: center;
 }
 
+.link a, .link a:hover, .link a:visited{
+	color: $primary;
+}
+
 //--------------------QUESTION------------------------------
 strong{color: $primary ;}
 
-.arg1{ color: $green;}
+.arg1{ color: $primary;}
 
 .arg2{ color: $secondary;}
 
@@ -74,29 +78,81 @@ strong{color: $primary ;}
 	margin-top: 0;
 	padding: 5px;
 }
+
+.instruction{
+	color: gray;
+	font-size: 90%;
+}
+
 #blank{
 	color: rgba(0,0,0,0);
 }
 .blank_sentence{
-		text-align: center;
+	text-align: center;
 }
 
 .btn-toolbar-vertical{
 	margin-top: 5px;
 }
+
+.question-submit-wrapper{ 
+	margin-top: 15px;
+}
+
+.btn-primary {border: none; background-color: lighten($primary-light,8); } //button
+
+.btn-primary:hover { background-color: $primary; } //hover
+
+.btn.active{background-color: $primary;}
+
 //-------------------FEEDBACK-------------------
 .feedback-wrapper > .jumbotron{
 	background-color: white;
+	padding: 5px;
 }
-.feedback-wrapper > .jumbotron > h3{
+.feedback-wrapper > .jumbotron > p.heading{
 	text-align: center;
 }
+
+.feedback-wrapper > .jumbotron > table{
+	text-align: center;
+	margin: 0px;
+}
+
+p.feedback-sentence{
+	font-size: 90%;
+	text-align: left;
+}
+
+p.feedback-blank-sentence{
+		font-size: 90%;
+	text-align: center;
+}
+
+.feedback-well{
+	padding: 2;
+}
+
+p.center{
+	size: 120%;
+	text-align: center;
+	font-weight: bold;
+}
+
 //-------------------CONSENT------------------
 
 .consent-wrapper > .panel> .panel-body > h4, .consent-wrapper > .panel > .panel-body > p{
 	font-size: 80%;
 }
 
+//-------------------SHARE-------------------
+.fbshare-wrapper > .jumbotron{
+//	text-align: center;
+	background-color: white;
+}
+.fbshare-wrapper > .jumbotron{
+	text-align: center;
+}
 
 //-------------------FOOTER-------------------
 .footer{
@@ -105,4 +161,5 @@ strong{color: $primary ;}
 }
 .footer > p{
 	text-align: center;
+	font-size: 80%;
 }

@@ -1,10 +1,38 @@
 <div class="jumbotron">
-	<h3><strong>Your Progress</strong></h3>
-		<p>Correct: <%= @num_correct %></p>
-		<p>All: <%= @num_question %></p>
-		<% if !@distribution.nil?%>
-			<% @distribution.each do |key, value|%>
-				<p><%= key["relation_display_name"] or key %> : <%= value%> </p>
+	<table class="table table-condensed">
+		<thead>
+			<tr><th style="width: 50%; text-align: center;">Questions Done</th><th style="width: 50%; text-align: center;">Score</th></tr>
+		</thead>
+		<tbody>
+			<tr><td><h3><strong><%= @num_question %></strong></h3></td><td><h3><strong><%= @num_correct %></strong></h3></td></tr>
+		</tbody>
+	</table>
+	
+	<% if !@distribution.nil?%>
+		<% question_marks = @message[0]%>
+		<% actual_message = @message[1]%>
+		<% alert_type = "success"%>
+		<% if question_marks == 0.5%>
+			<% alert_type = "warning"%>
+		<% elsif question_marks < 0.5%>
+			<% alert_type = "danger"%>
+		<%end%>
+		<div class="alert alert-<%= alert_type %>" role="alert">You earned <%= question_marks%> points<br><%= actual_message %></div>
+		<a id="hideshow" class="heading"><small><strong>Answer to previous question</strong></small></a>
+		<div id="distribution">
+		<div class="well feedback-well">
+		<p class="feedback-sentence"> <%= highlight(@prev_sentence, @prev_question)%></p>
+		<p class="feedback-blank-sentence"><span class="arg1"> <%= @prev_question.args[0]["text"]%><%= @prev_question.args[0]["mention_text"]%> </span> <u><span id="blank">ssssssssssssssssss</span></u> <span class="arg2"> <%=@prev_question.args[1]["text"] %><%= @prev_question.args[1]["mention_text"]%></span></p>
+	</div>
+		<% @distribution.each do |key, value|%>
+			<% percentage = value %>
+			<% if percentage >= 50%>
+				<% btn_type = "btn-success"%>
+			<% else%>
+				<% btn_type = "btn-danger"%>
 			<%end%>
-			<%end%>	
+			<button class="btn btn-block disabled <%= btn_type %>"><%= key["relation_display_name"] or key %> (<%= percentage%>% chose this option)</button>
+		<%end%>
+	</div>
+	<%end%>	
 </div>

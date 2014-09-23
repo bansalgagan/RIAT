@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   get '/consent' => 'praxeng#consent'
   get '/practice' => 'praxeng#practice'
   get '/privacy' => "praxeng#privacy"
+  get '/about' => "praxeng#about"
   post '/save_response' => 'praxeng#save_response'
   post 'save_response_consent' => 'praxeng#save_response_consent'
   # get 'english-comprehension-practice/thankyou' => "main#thankyou"

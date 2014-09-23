@@ -44,6 +44,11 @@ module ApplicationHelper
     return new_string.html_safe
   end
   
+  def get_num_annotations(question_id)
+    count = Annotation.by_question_id.key(question_id).count
+    return count
+  end
+  
   def get_num_annotations_by_user(user)
     return Annotation.by_user_id.key(user.id).count
   end
@@ -78,8 +83,6 @@ module ApplicationHelper
     question = get_question_by_num(question_num)
     exp = get_exp_by_name(experiment_name) 
     count = Annotation.by_question_id_and_experiment_id.key([question.id,exp.id]).all.count
-    puts "*******************COUNT"
-    puts count
     return count
   end
   

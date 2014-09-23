@@ -1,0 +1,24 @@
+
+<div class="fbshare-wrapper">
+	<div class="jumbotron">
+		<h3>Summary</h3>
+		<h4>You scored <strong><%= @num_correct%>/<%= @num_question %>!</strong></h4>
+		<h4>You scored more than <%= get_user_percentile(@num_correct)%>% of other PraxEng visitors </h4>
+		
+		<a class="btn btn-lg btn-primary" title="send to Facebook"
+		  href="https://www.facebook.com/dialog/feed?
+		  app_id=765537720172314&
+			name=I just scored <%= @num_correct%>/<%= @num_question %> on PraxEng!&
+			display=popup&
+			caption=www.praxeng.com&
+			link=http%3A%2F%2Fwww.praxeng.com%2Fabout%2F&
+			redirect_uri=http%3A%2F%2Fwww.praxeng.com%2F" target="_blank">Share on Facebook
+		</a>
+		<form action= "/practice" role="form" method="get">
+			  <div class="form-group">	
+					<button type="submit" class="btn btn-lg btn-warning">Continue Practicing</button>
+					<input type="hidden" name="continue" value="true"></input>
+			</div>
+		</form>
+	</div>
+</div>

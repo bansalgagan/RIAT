@@ -1,7 +1,7 @@
 class User < CouchRest::Model::Base
-  belongs_to :experiment
+  belongs_to :experiment #to enable A/B testing,
   
-  property :src, String #to enable A/B testing
+  # property :src, String #stores referer information
   property :name, String #session id for now
   property :email, String
   property :password, String 
@@ -14,7 +14,8 @@ class User < CouchRest::Model::Base
   
   design do
     view :by_name
-    view :by_src
+    view :by_experiment_id
+    # view :by_src
     view :by_ip_address
   end 
 end

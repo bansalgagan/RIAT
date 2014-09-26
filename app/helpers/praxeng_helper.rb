@@ -1,5 +1,5 @@
 module PraxengHelper
-   
+  
   def is_new_user?
     user = get_current_user
     if  user.nil?
@@ -8,15 +8,10 @@ module PraxengHelper
       return false
     end
   end
-  
-  def get_num_users
-    user_count = User.by_src.key("praxeng").count
-    return user_count
-  end
-  
+    
   def get_user_percentile(score)
-    users = User.by_src.key("praxeng").all
-    count = get_num_users
+    users = get_users_by_experiment_name(PRAXENG_EXPERIMENT)
+    count = users.count
     lesser_users = 0
     users.each do |user|
       if(user.num_correct < score)
@@ -29,10 +24,11 @@ module PraxengHelper
   def create_new_user
     session_id = get_session_id or not_found
     ip = request.remote_ip or not_found
+    exp = get_experiment_by_name(PRAXENG_EXPERIMENT)
     if session_id.nil? || ip.nil?
       not_found
     end
-    user = User.new(:name => session_id, :src => 'praxeng', :num_question => 0, :num_correct => 0.0, :ip_address => ip)
+    user = User.new(:name => session_id, :experiment=>exp, :num_question => 0, :num_correct => 0.0, :ip_address => ip)
     user.save
     return user
   end
@@ -74,13 +70,13 @@ module PraxengHelper
   def save_user_response
     option = params[:option]
     user_response = params[:response]
-    question = get_question_by_id(params[:question_id])
+    question = get_object(params[:question_id])
     user = get_current_user or not_found
     
     if !option.nil? && !question.nil?     
       if option != "skip"
          annotation = nil
-         exp = Experiment.by_name.key(PRAXENG_EXPERIMENT).first or not_found
+         exp = get_experiment_by_name(PRAXENG_EXPERIMENT)
         if option == "none" || user_response.nil?
           annotation = Annotation.new(:question => question, :user => user, :response => [], :experiment => exp)
         else
@@ -91,7 +87,7 @@ module PraxengHelper
           end
           annotation = Annotation.new(:question => question, :user => user, :response => response, :experiment => exp)
         end
-        score, message = evaluate_user_response2(question, annotation)
+        score, message = evaluate_user_response(question, annotation)
         update_user_score(score)
         annotation.save
         return annotation.id
@@ -151,22 +147,22 @@ module PraxengHelper
   end
   
   def get_first_question_for_user
-    question_num = increment_exp_question_index(PRAXENG_EXPERIMENT)
+    question_num = increment_experiment_question_num(PRAXENG_EXPERIMENT)
     question = get_question_by_num(question_num)
     return question
   end
     
   def get_next_question_for_user
-    question_num = increment_exp_question_index(PRAXENG_EXPERIMENT)
+    question_num = increment_experiment_question_num(PRAXENG_EXPERIMENT)
     question_num += get_num_question
     question = get_question_by_num(question_num)
     return question
   end
   
   def get_question_for_user
-    question_num = increment_exp_question_index(PRAXENG_EXPERIMENT)
+    question_num = increment_experiment_question_num(PRAXENG_EXPERIMENT)
     user = get_current_user
-    while has_attempted_question(question_num, user)
+    while user_has_attempted_question?(user, question_num)
       question_num += 1
     end
     question = get_question_by_num(question_num)
@@ -183,7 +179,7 @@ module PraxengHelper
     question_id = params[:question_id]
     user_reason = params[:challenge_reason]
     user = get_user_by_id(user_id) or not_found
-    question = get_question_by_id(question_id) or not_found
+    question = get_object(question_id) or not_found
     
     challenge = Challenge.new(:user => user, :question => question, :reason => user_reason)
     challenge.save
@@ -193,53 +189,7 @@ module PraxengHelper
     annotation = Annotation.get(annotation_id)
     return annotation
   end
-  
-  def compute_gold_by_majority(question)
-    annotations = Annotation.by_question_id.key(question.id).all
-    distribution = {}
-    question.answers.each do |ans|
-      distribution[ans] = 0
-    end
-    distribution["None of these"] = 0
-    count = 0
-    annotations.each do |anno|
-      count = count + 1
-      response = anno.response
-      if response == []
-        distribution["None of these"] += 1
-      end
-      response.each do |resp|
-        distribution[resp] += 1
-      end
-    end
-    gold = []
     
-    distribution.each do  |key, value|
-      if value >= count/2
-        gold.push(key)
-      end
-    end
-    if count == 1
-      return []
-    end
-    return gold
-  end
-  
-  def compute_gold_by_majority_and_exclude(question, annotation)
-    distribution = get_answer_distribution_and_exclude(question, annotation)
-    gold = []
-    distribution.each do |key, value|
-      if (value) >= 50
-        if key["relation_display_name"].nil?
-          gold.push(key)
-        else
-          gold.push(key["relation_display_name"])
-        end
-      end
-    end
-    return gold
-  end
-  
   def compute_gold_full_by_majority_and_exclude(question, annotation)
     distribution = get_answer_distribution_and_exclude(question, annotation)
     gold = []
@@ -251,49 +201,14 @@ module PraxengHelper
     return gold
   end
   
-  # def compute_gold_by_majority_and_exclude2(question, annotation)
-  #   annotations = Annotation.by_question_id.key(question.id).all
-  #   distribution = {}
-  #   question.answers.each do |ans|
-  #     distribution[ans] = 0
-  #   end
-  #   distribution["None of these"] = 0
-  #   count = 0
-  #   annotations.each do |anno|
-  #     if anno.id == annotation.id
-  #       next
-  #     end
-  #     count = count + 1
-  #     response = anno.response
-  #     if response == []
-  #       distribution["None of these"] += 1
-  #     end
-  #     response.each do |resp|
-  #       distribution[resp] += 1
-  #     end
-  #   end
-  #   gold = []
-  #
-  #   distribution.each do  |key, value|
-  #     if value >= count/2
-  #       gold.push(key)
-  #     end
-  #   end
-  #   if count == 1
-  #     return []
-  #   end
-  #   return gold
-  # end
-  
-  def evaluate_user_response2(question, annotation)
+  def evaluate_user_response(question, annotation)
     # annotation = get_annotation_by_id(annotation_id)
     perfect_score_messages = ["Great! You are correct!", "You are correct! Keep practicing!"]
     new_answer_message = "Thanks! We do not know the answer to this question yet."
     
     if !annotation.nil?
       gold = compute_gold_full_by_majority_and_exclude(question, annotation)
-      # puts "GOLD-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      # puts gold
+
       # If I don't know the answer
       if gold == []
         return 1, new_answer_message
@@ -311,8 +226,7 @@ module PraxengHelper
           
       user_unattempted = []
       user_incorrect = []
-      # puts "USER-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      # puts  response
+
       score = 0.0
       if gold.include?("None of these") && response.include?("None of these")
         score = 1.0
@@ -332,11 +246,6 @@ module PraxengHelper
           user_incorrect.push(ans["relation_display_name"])
         end
       end
-      # puts "INC-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      # puts  user_incorrect
-      # puts "UNAT-HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"
-      # puts  user_unattempted
-      
       
       message = "Thanks, but we think "
       if  user_unattempted.size != 0
@@ -372,100 +281,5 @@ module PraxengHelper
       
       return score, perfect_score_messages.sample
     end
-  end
-    
-  
-  # def evaluate_user_response(question, annotation_id)
-  #   annotation = get_annotation_by_id(annotation_id)
-  #   perfect_score_messages = ["Great! You are correct!", "You are correct! Keep practicing!"]
-  #   new_answer_message = "Thanks! We do not know the answer to this question yet."
-  #   if !annotation.nil?
-  #     gold = compute_gold_by_majority(question)
-  #
-  #     # If I don't know the answer
-  #     if gold == []
-  #       return 1, new_answer_message
-  #     end
-  #
-  #     #If I know the answer
-  #     user_response = annotation.response
-  #     response = []
-  #     user_response.each do |resp|
-  #       response.push(resp)
-  #     end
-  #     if user_response == []
-  #       response.push("None of these")
-  #     end
-  #
-  #     user_unattempted = []
-  #     user_incorrect = []
-  #     score = 0
-  #     response.each do |usr_resp|
-  #       if gold.include? usr_resp
-  #         score += 1.0/(gold.size)
-  #       else
-  #         score = score - 1.0/(2 * gold.size)
-  #         if usr_resp["relation_display_name"].nil?
-  #           user_incorrect.push(usr_resp)
-  #         else
-  #           user_incorrect.push(usr_resp["relation_display_name"])
-  #         end
-  #       end
-  #     end
-  #
-  #     gold.each do |g|
-  #       if !response.include? g
-  #         if g["relation_display_name"].nil?
-  #            user_unattempted.push(g)
-  #         else
-  #            user_unattempted.push(g["relation_display_name"])
-  #         end
-  #         score = score - (1.0/(2 * gold.size))
-  #       end
-  #     end
-  #
-  #     # If perfect match
-  #     if user_unattempted.size == 0 && user_incorrect.size == 0
-  #       return score, perfect_score_messages.sample
-  #     end
-  #
-  #     # If some answer is attempted
-  #     message = "Thanks, but we think "
-  #     if user_unattempted.size != 0
-  #       if user_unattempted.size == 1
-  #         message += user_unattempted[0].to_s+" is also the answer"
-  #       else
-  #         for i in 0..(user_unattempted.size-1)
-  #           if i == (user_unattempted.size-1)
-  #             message += user_unattempted[i].to_s+" are also the answers"
-  #           else
-  #             message += user_unattempted[i]+", "
-  #           end
-  #         end
-  #       end
-  #       return score, message
-  #     end
-  #
-  #     # If some answer is incorrect
-  #     message = "Oops, but we think "
-  #     if user_incorrect.size != 0
-  #       if user_incorrect.size == 1
-  #         message += user_incorrect[0].to_s+" is incorrect"
-  #       else
-  #         for i in 0..user_incorrect.size-1
-  #           if i == user_incorrect.size-1
-  #             message += user_incorrect[i].to_s + " are incorrect"
-  #           else
-  #             message += user_incorrect[i].to_s + ", "
-  #           end
-  #         end
-  #       end
-  #       return score, message
-  #     end
-  #   else
-  #     return nil
-  #   end
-  #   return nil
-  # end
-  
+  end  
 end

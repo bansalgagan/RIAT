@@ -30,15 +30,15 @@ class PraxengController < ApplicationController
       render "share"
     end
     if !params[:question_id].nil?
-      @prev_question = get_question_by_id(params[:question_id])
+      @prev_question = get_object(params[:question_id])
       @prev_sentence = get_question_sentence(@prev_question)
-      evaluation = evaluate_user_response2(@prev_question, get_annotation_by_id(params[:annotation_id]))
+      evaluation = evaluate_user_response(@prev_question, get_annotation_by_id(params[:annotation_id]))
       if !evaluation.nil?
         score = evaluation[0]
         # update_user_score(score)
         @message = evaluation
       end
-      @num_annotations = get_num_annotations(params[:question_id])
+      @num_annotations = get_num_annotations_by_question_id(params[:question_id])
       @distribution = get_answer_distribution_and_exclude(@prev_question, get_annotation_by_id(params[:annotation_id]))
     end
     @question = get_next_question_for_user

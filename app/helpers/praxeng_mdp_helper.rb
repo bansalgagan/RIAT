@@ -1,45 +1,32 @@
 module PraxengMdpHelper
-  
-  # def get_next_question_for_user
-  # end
-  #
+
   def eig(a,b,n)
-    #eval  = Math.log(n) - (b/(a+b))*log(n-1) - digamma(a+b+1) + (a*digamma(a+1)+b*digamma(b+1))/(a+b) 
-     r = RinRuby.new()
-     
-    r.eval "r_output <- (log(#{n}) - (#{b}/(#{a}+#{b}))*log(#{n}-1) - digamma(#{a}+#{b}+1) + (#{a}*digamma(#{a}+1)+#{b}*digamma(#{b}+1))/(#{a}+#{b}))"
-    val = r.pull "r_output"
+    r = RSRuby.instance
+    text = "(log(#{n}) - (#{b}/(#{a}+#{b}))*log(#{n}-1) - digamma(#{a}+#{b}+1) + (#{a}*digamma(#{a}+1)+#{b}*digamma(#{b}+1))/(#{a}+#{b}))"
+    val = r.eval(r.parse(:text => text))
     return val
   end
-
-  def digamma(x)
-    R.eval "r_output <- digamma(#{x})"
-    o = R.pull "r_output"
-    return o
-  end
-
+  
   def sig(a,b,n)
-    # R.eval "integrand <- function(q) {((-log(#{n}) + q*log(q) + (1-q)*log((1-q)/(#{n}-1)))^2)*(q^#{a}*(1-q)^#{b}*1/beta(#{a},#{b}))}"
-    # R.eval "integ <- integrate(integrand, lower = 0, upper = 1)$val"
-    # R.eval "eig <- (log(#{n}) - (#{b}/(#{a}+#{b}))*log(#{n}-1) - digamma(#{a}+#{b}+1) + (#{a}*digamma(#{a}+1)+#{b}*digamma(#{b}+1))/(#{a}+#{b}))"
-    # R.eval "r_output <- (integ - eig)"
-    # val = R.pull "r_output"
-    r = RinRuby.new()
-    r.eval <<-EOF
-      integrand <- function(q) {((-log(#{n}) + q*log(q) + (1-q)*log((1-q)/(#{n}-1)))^2)*(q^#{a}*(1-q)^#{b}*1/beta(#{a},#{b}))}
-      integ <- integrate(integrand, lower = 0, upper = 1)$val
-      eig <- (log(#{n}) - (#{b}/(#{a}+#{b}))*log(#{n}-1) - digamma(#{a}+#{b}+1) + (#{a}*digamma(#{a}+1)+#{b}*digamma(#{b}+1))/(#{a}+#{b}))
-      r_output <- (integ - eig)
-    EOF
-    val = r.pull "r_output"
+    r = RSRuby.instance
+    text = "integrate(function(q) {((-log(#{n}) + q*log(q) + (1-q)*log((1-q)/(#{n}-1)))^2)*(q^#{a}*(1-q)^#{b}*1/beta(#{a},#{b}))}, lower = 0, upper = 1)$val"
+    integ = r.eval(r.parse(:text => text))
     
-    if val >= 0 
+    eig1 = eig(a,b,n)
+    val = integ - eig1
+    if val > 0
       return Math.sqrt(val)
-    else 
+    else
       return 0
     end
-    #return val
   end
+  
+  def digam(x)
+    r = RSRuby.instance
+    val = r.digamma(x)
+    return val
+  end
+    
 
   def u_now_question(a,b,n)
     return eig(a,b,n)- sig(a,b,n)

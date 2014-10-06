@@ -42,6 +42,7 @@ gem 'spring',        group: :development
 gem 'couchrest_model'
 gem "therubyracer"
 gem "less-rails"
+gem "rinruby"
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git', :branch => "bootstrap3"
 #heroku gem
 gem 'rails_12factor', group: :production

@@ -194,7 +194,7 @@ module PraxengHelper
     distribution = get_answer_distribution_and_exclude(question, annotation)
     gold = []
     distribution.each do |key, value|
-      if (value) >= 50
+      if (value) >= 70
         gold.push(key)
       end
     end

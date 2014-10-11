@@ -7,8 +7,15 @@ class User < CouchRest::Model::Base
   property :password, String 
   property :num_question, Integer
   property :num_correct, Float
+
   property :ip_address, String
   property :confirm_codes, []
+
+  ###MDP
+  property :calib_question_num, Integer
+  property :coll_question_num, Integer
+  property :u_now_question, Float
+  property :c, Integer
   
   timestamps!
   

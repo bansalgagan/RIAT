@@ -6,7 +6,7 @@ class PraxengMdpController < ApplicationController
   prepend_view_path 'app/views/'
   
   def landing_page
-    @question = get_first_question_for_user
+    @type, @question = get_calib_question_for_user
     @sentence = get_question_sentence(@question)
     @next_page = "/mdp/save_response"
     if is_new_user?
@@ -19,21 +19,21 @@ class PraxengMdpController < ApplicationController
       redirect_to "/mdp/practice"
       return
     end
-    render 'praxeng/landing_page'
+    render 'praxeng/landing_page_mdp'
     return 
   end
   
   def consent
     @question_id = params[:question_id]
     @annotation_id = params[:annotation_id]
-    render 'praxeng/consent'
+    render 'praxeng/consent_mdp'
   end
   
   def practice  
     @num_correct = get_num_correct
     @num_question = get_num_question
     if @num_question%10 == 0 && params[:continue].nil?
-      render "praxeng/share"
+      render "praxeng/share_mdp"
       return
     end
     if !params[:question_id].nil?
@@ -48,10 +48,10 @@ class PraxengMdpController < ApplicationController
       @num_annotations = get_num_annotations_by_question_id(params[:question_id])
       @distribution = get_answer_distribution_and_exclude(@prev_question, get_annotation_by_id(params[:annotation_id]))
     end
-    @question = get_next_question_for_user
+    @type, @question = get_next_question_for_user
     @sentence = get_question_sentence(@question)
     @next_page = "/mdp/save_response"
-    render 'praxeng/practice'
+    render 'praxeng/practice_mdp'
   end
   
   def save_response

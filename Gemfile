@@ -46,6 +46,7 @@ gem "less-rails"
 gem 'rsruby'
 gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git', :branch => "bootstrap3"
 #heroku gem
+gem 'thin'
 gem 'rails_12factor', group: :production
 ###############################################
 

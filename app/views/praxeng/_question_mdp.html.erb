@@ -1,0 +1,39 @@
+<div class="panel panel-default">
+<div class="panel-body">
+	<p class="center">Question #<%= @num_question + 1%>, <%=@type%></p>
+	<p class="instruction">Read the following sentence carefully: </p>
+	<p class="well" id='question_sentence'> <%= highlight(@sentence, @question)%> </p>
+	<p class="instruction">Fill in the blank based on information <u>directly</u> conveyed in the sentence. <u>Multiple options can be correct</u>.</p>
+	<p class="well blank_sentence"><span class="arg1"> <%= @question.args[0]["text"]%><%= @question.args[0]["mention_text"]%> </span> <u><span id="blank">ssssssssssssssssss</span></u> <span class="arg2"> <%=@question.args[1]["text"] %><%= 
+	@question.args[1]["mention_text"]%></span></p>
+
+	<form action= "<%= @next_page %>" role="form" method="post">
+		  <div class="form-group">	
+				<div class="btn-toolbar-vertical" data-toggle="buttons">
+					
+					<%indexes=[]%>
+					<% @question.answers.length.times do |i|%>
+						<%indexes.push(i)%>
+					<%end%>
+					<%indexes = indexes.shuffle%>
+					
+					<% i=0 %>
+			<% @question.answers.length.times do |i|%>
+					<%index = indexes[i]%>
+					<%opt=@question.answers[index]%>
+					<label class="btn btn-primary btn-lg btn-block" id="checkboxes">
+						<input type="checkbox" name="response[r<%=index%>]" value="<%=index%>" /><span id="option"><em><%= opt["relation_display_name"] %></em></span>
+					</label>
+				<% end %>
+				</div>
+			<div class="question-submit-wrapper">
+				<div class="btn-toolbar-vertical">			
+					<button type="submit" class="btn btn-warning btn-lg btn-block" name="option" value="submit">Submit</button>	
+					<button type="submit" class="btn btn-warning btn-lg btn-block" name="option" value="none">None of these</button>		
+				</div>		
+				<input type="hidden" name="question_id" value= "<%= @question.id %>">		
+			</div>
+		</div>
+	</form>
+</div>
+</div>
